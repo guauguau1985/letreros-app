@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Layout } from './components/Layout';
 import { ListaPage } from './pages/ListaPage';
 import { DetallePage } from './pages/DetallePage';
 import './App.css';
@@ -6,10 +7,12 @@ import './App.css';
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<ListaPage />} />
-        <Route path="/letrero/:id" element={<DetallePage />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<ListaPage />} />
+          <Route path="/letrero/:id" element={<DetallePage />} />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   );
 }

@@ -1,57 +1,65 @@
 import { Link } from 'react-router-dom';
 import type { Letrero } from '../types/letrero';
+import { getImagePath } from '../utils/imagePath';
 
-interface Props {
-  letrero: Letrero;
+interface Props { letrero: Letrero; }
+
+function ImgPlaceholder() {
+  return (
+    <div className="letrero-card-no-img">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} width={32} height={32}>
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+      <span>Sin imagen</span>
+    </div>
+  );
 }
 
 export function LetreroCard({ letrero }: Props) {
+  const imgPath = getImagePath(letrero.id);
+  const vigente = letrero.estado === 'Vigente';
+
   const fmtMonto = (v: number | null) =>
     v != null ? `$${v.toLocaleString('es-CL')}` : '—';
 
-  const fmtMedidas = () => {
-    if (letrero.ancho != null && letrero.alto != null)
-      return `${letrero.ancho} × ${letrero.alto} m`;
-    return '—';
-  };
+  const medidas = letrero.ancho && letrero.alto
+    ? `${letrero.ancho}×${letrero.alto}m`
+    : '—';
 
   return (
-    <Link
-      to={`/letrero/${letrero.id}`}
-      style={{ textDecoration: 'none', color: 'inherit' }}
-    >
-      <div className="letrero-card">
-        <div className="letrero-card-img">
-          {letrero.foto ? (
-            <img
-              src={`/imagenes/${letrero.foto}`}
-              alt={`Letrero ${letrero.id}`}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          ) : (
-            <div className="letrero-card-no-img">Sin imagen</div>
-          )}
+    <Link to={`/letrero/${letrero.id}`} className="letrero-card">
+      <div className="letrero-card-img">
+        {imgPath ? (
+          <img
+            src={imgPath}
+            alt={`Letrero ${letrero.id}`}
+            onError={e => {
+              const el = e.target as HTMLImageElement;
+              el.style.display = 'none';
+              el.parentElement!.innerHTML = '<div class="letrero-card-no-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Sin imagen</span></div>';
+            }}
+          />
+        ) : (
+          <ImgPlaceholder />
+        )}
+      </div>
+      <div className="letrero-card-body">
+        <div className="letrero-card-top">
+          <span className="letrero-card-id">LT-{String(letrero.id).padStart(3,'0')}</span>
+          <span className={`badge ${vigente ? 'badge-vigente' : 'badge-novigente'}`}>
+            {letrero.estado}
+          </span>
         </div>
-        <div className="letrero-card-body">
-          <div className="letrero-card-header">
-            <span className="letrero-card-id">#{letrero.id}</span>
-            <span className={`letrero-badge ${letrero.estado === 'Vigente' ? 'badge-vigente' : 'badge-novigente'}`}>
-              {letrero.estado}
-            </span>
-          </div>
-          <p className="letrero-card-ubic">{letrero.ubicacion || '—'}</p>
-          <div className="letrero-card-grid">
-            <span><strong>Proveedor:</strong> {letrero.proveedor || '—'}</span>
-            <span><strong>Ruta:</strong> {letrero.ruta || '—'}</span>
-            <span><strong>Comuna:</strong> {letrero.comuna || '—'}</span>
-            <span><strong>Región:</strong> {letrero.region || '—'}</span>
-            <span><strong>Medidas:</strong> {fmtMedidas()}</span>
-            <span><strong>Arriendo 2025:</strong> {fmtMonto(letrero.monto_arriendo_2025)}</span>
-            <span><strong>Vigencia:</strong> {letrero.vigencia || '—'}</span>
-            <span><strong>Marca:</strong> {letrero.marca || '—'}</span>
-          </div>
+        <p className="letrero-card-ubic">{letrero.ubicacion || '—'}</p>
+        <div className="letrero-card-meta">
+          <span><strong>Ruta:</strong> {letrero.ruta || '—'}</span>
+          <span><strong>Medidas:</strong> {medidas}</span>
+          <span><strong>Proveedor:</strong> {letrero.proveedor || '—'}</span>
+          <span><strong>Arriendo:</strong> {fmtMonto(letrero.monto_arriendo_2025)}</span>
+          <span><strong>Comuna:</strong> {letrero.comuna || '—'}</span>
+          <span><strong>Vigencia:</strong> {letrero.vigencia || '—'}</span>
         </div>
       </div>
     </Link>
