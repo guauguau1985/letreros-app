@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { letreros } from '../data/letreros';
+import { getEstadoEfectivo } from '../types/letrero';
 import { LetreroCard } from './LetreroCard';
 
 export function LetreroList() {
@@ -19,7 +20,7 @@ export function LetreroList() {
 
   const filtrados = useMemo(() => {
     return letreros.filter(l => {
-      if (filtroEstado && l.estado !== filtroEstado) return false;
+      if (filtroEstado && getEstadoEfectivo(l) !== filtroEstado) return false;
       if (filtroComuna && l.comuna !== filtroComuna) return false;
       if (filtroProveedor && l.proveedor !== filtroProveedor) return false;
       if (busqueda) {

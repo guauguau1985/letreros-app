@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Letrero } from '../types/letrero';
+import { getEstadoEfectivo } from '../types/letrero';
 import { getImagePath } from '../utils/imagePath';
 
 interface Props { letrero: Letrero; }
@@ -19,7 +20,8 @@ function ImgPlaceholder() {
 
 export function LetreroCard({ letrero }: Props) {
   const imgPath = getImagePath(letrero.id);
-  const vigente = letrero.estado === 'Vigente';
+  const estadoEfectivo = getEstadoEfectivo(letrero);
+  const vigente = estadoEfectivo === 'Vigente';
 
   const fmtMonto = (v: number | null) =>
     v != null ? `$${v.toLocaleString('es-CL')}` : '—';
@@ -49,7 +51,7 @@ export function LetreroCard({ letrero }: Props) {
         <div className="letrero-card-top">
           <span className="letrero-card-id">LT-{String(letrero.id).padStart(3,'0')}</span>
           <span className={`badge ${vigente ? 'badge-vigente' : 'badge-novigente'}`}>
-            {letrero.estado}
+            {estadoEfectivo}
           </span>
         </div>
         <p className="letrero-card-ubic">{letrero.ubicacion || '—'}</p>

@@ -33,3 +33,10 @@ export interface Letrero {
   registro_caminero: string | null;
   estado: 'Vigente' | 'No vigente';
 }
+
+export function getEstadoEfectivo(letrero: Letrero): 'Vigente' | 'No vigente' {
+  if (letrero.renovacion_automatica?.toUpperCase() === 'SI') {
+    return 'Vigente';
+  }
+  return letrero.estado;
+}

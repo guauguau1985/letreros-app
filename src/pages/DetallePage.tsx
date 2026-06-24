@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { letreros } from '../data/letreros';
+import { getEstadoEfectivo } from '../types/letrero';
 import { getImagePath } from '../utils/imagePath';
 
 function PinIcon() {
@@ -145,7 +146,8 @@ export function DetallePage() {
   }
 
   const imgPath = getImagePath(letrero.id);
-  const vigente = letrero.estado === 'Vigente';
+  const estadoEfectivo = getEstadoEfectivo(letrero);
+  const vigente = estadoEfectivo === 'Vigente';
   const medidas = letrero.ancho && letrero.alto
     ? `${letrero.ancho} × ${letrero.alto} m`
     : '—';
@@ -214,7 +216,7 @@ export function DetallePage() {
             </div>
             <div className="detalle-hero-tags">
               <span className={`badge ${vigente ? 'badge-vigente' : 'badge-novigente'}`}>
-                {letrero.estado}
+                {estadoEfectivo}
               </span>
               <span className="detalle-contract">{contratoNum}</span>
             </div>
